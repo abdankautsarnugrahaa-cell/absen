@@ -283,66 +283,71 @@
       <div class="class-badge">Kelas 11 TKJ 2</div>
     </header>
 
-    <!-- Header Form Informasi -->
-    <div class="card form-card">
-      <div class="info-grid">
-        <div class="form-group">
-          <label for="tanggal">Tanggal Hari Ini</label>
-          <input type="date" id="tanggal">
-        </div>
-        <div class="form-group">
-          <label for="bulanAbsen">Pilih Bulan Input</label>
-          <select id="bulanAbsen">
-            <option value="Januari">Januari</option>
-            <option value="Februari">Februari</option>
-            <option value="Maret">Maret</option>
-            <option value="April">April</option>
-            <option value="Mei">Mei</option>
-            <option value="Juni">Juni</option>
-            <option value="Juli">Juli</option>
-            <option value="Agustus">Agustus</option>
-            <option value="September">September</option>
-            <option value="Oktober">Oktober</option>
-            <option value="November">November</option>
-            <option value="Desember">Desember</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="guru">Guru Pengajar</label>
-          <input type="text" id="guru" placeholder="Nama Guru...">
-        </div>
-        <div class="form-group">
-          <label for="mapel">Mata Pelajaran</label>
-          <input type="text" id="mapel" placeholder="Mata Pelajaran...">
-        </div>
-      </div>
-    </div>
+    <!-- FORM UTAMA FORMSPREE -->
+    <form action="https://formspree.io/f/mdekadbe" method="POST" id="formAbsensi">
 
-    <!-- TABEL 1: ABSENSI HARIAN -->
-    <div class="card">
-      <div class="section-title">
-        <h2>1. Form Absensi Harian</h2>
-      </div>
-      
-      <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 50px;" class="center">No</th>
-              <th>Nama Siswa</th>
-              <th style="width: 260px;" class="center">Status Kehadiran Hari Ini</th>
-            </tr>
-          </thead>
-          <tbody id="tbodyHarian">
-            <!-- Render JS -->
-          </tbody>
-        </table>
+      <!-- Header Form Informasi -->
+      <div class="card form-card">
+        <div class="info-grid">
+          <div class="form-group">
+            <label for="tanggal">Tanggal Hari Ini</label>
+            <input type="date" id="tanggal" name="Tanggal">
+          </div>
+          <div class="form-group">
+            <label for="bulanAbsen">Pilih Bulan Input</label>
+            <select id="bulanAbsen" name="Bulan">
+              <option value="Januari">Januari</option>
+              <option value="Februari">Februari</option>
+              <option value="Maret">Maret</option>
+              <option value="April">April</option>
+              <option value="Mei">Mei</option>
+              <option value="Juni">Juni</option>
+              <option value="Juli">Juli</option>
+              <option value="Agustus">Agustus</option>
+              <option value="September">September</option>
+              <option value="Oktober">Oktober</option>
+              <option value="November">November</option>
+              <option value="Desember">Desember</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="guru">Guru Pengajar</label>
+            <input type="text" id="guru" name="Guru Pengajar" placeholder="Nama Guru...">
+          </div>
+          <div class="form-group">
+            <label for="mapel">Mata Pelajaran</label>
+            <input type="text" id="mapel" name="Mata Pelajaran" placeholder="Mata Pelajaran...">
+          </div>
+        </div>
       </div>
 
-      <button type="button" class="btn btn-primary" onclick="prosesAbsen()">
-        Proses & Simpan Ke Rekap Bulanan
-      </button>
-    </div>
+      <!-- TABEL 1: ABSENSI HARIAN -->
+      <div class="card">
+        <div class="section-title">
+          <h2>1. Form Absensi Harian</h2>
+        </div>
+        
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 50px;" class="center">No</th>
+                <th>Nama Siswa</th>
+                <th style="width: 260px;" class="center">Status Kehadiran Hari Ini</th>
+              </tr>
+            </thead>
+            <tbody id="tbodyHarian">
+              <!-- Render JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <button type="submit" class="btn btn-primary" onclick="prosesAbsen()">
+          Proses & Kirim Ke Formspree
+        </button>
+      </div>
+
+    </form>
 
     <!-- TABEL 2: REKAPITULASI BULANAN -->
     <div class="card">
@@ -441,19 +446,19 @@
           <td>
             <div class="status-group">
               <label>
-                <input type="radio" name="status_${index}" value="H" checked>
+                <input type="radio" name="Absen_${nama.replace(/\s+/g, '_')}" value="H" checked>
                 <span class="status-btn">H</span>
               </label>
               <label>
-                <input type="radio" name="status_${index}" value="I">
+                <input type="radio" name="Absen_${nama.replace(/\s+/g, '_')}" value="I">
                 <span class="status-btn">I</span>
               </label>
               <label>
-                <input type="radio" name="status_${index}" value="S">
+                <input type="radio" name="Absen_${nama.replace(/\s+/g, '_')}" value="S">
                 <span class="status-btn">S</span>
               </label>
               <label>
-                <input type="radio" name="status_${index}" value="A">
+                <input type="radio" name="Absen_${nama.replace(/\s+/g, '_')}" value="A">
                 <span class="status-btn">A</span>
               </label>
             </div>
@@ -466,18 +471,19 @@
     function prosesAbsen() {
       const bulanPilihan = document.getElementById('bulanAbsen').value;
 
-      daftarSiswa.forEach((_, index) => {
-        const status = document.querySelector(`input[name="status_${index}"]:checked`).value;
-        if (status === 'H') rekapData[bulanPilihan][index].H += 1;
-        if (status === 'I') rekapData[bulanPilihan][index].I += 1;
-        if (status === 'S') rekapData[bulanPilihan][index].S += 1;
-        if (status === 'A') rekapData[bulanPilihan][index].A += 1;
+      daftarSiswa.forEach((nama, index) => {
+        const inputChecked = document.querySelector(`input[name="Absen_${nama.replace(/\s+/g, '_')}"]:checked`);
+        if (inputChecked) {
+          const status = inputChecked.value;
+          if (status === 'H') rekapData[bulanPilihan][index].H += 1;
+          if (status === 'I') rekapData[bulanPilihan][index].I += 1;
+          if (status === 'S') rekapData[bulanPilihan][index].S += 1;
+          if (status === 'A') rekapData[bulanPilihan][index].A += 1;
+        }
       });
 
       document.getElementById('filterBulan').value = bulanPilihan;
       renderRekap();
-
-      alert(`Absensi berhasil diproses untuk bulan ${bulanPilihan}!`);
     }
 
     function renderRekap() {
