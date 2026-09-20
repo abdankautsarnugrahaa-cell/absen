@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Absensi & Rekap Bulanan Modern</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-main: #f8fafc;
+      --surface: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      
+      --hadir: #10b981;
+      --izin: #3b82f6;
+      --sakit: #f59e0b;
+      --alpa: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      padding: 30px 15px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Header Styling */
+    .app-header {
+      background: linear-gradient(135deg, #4f46e5, #3b82f6);
+      color: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.3);
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .app-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .app-header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .class-badge {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    /* Card Panels */
+    .card {
+      background: var(--surface);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      padding: 24px;
+      margin-bottom: 25px;
+    }
+
+    /* Info Grid Form */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    input, select {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+      background-color: #fff;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    /* Section Titles */
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-title h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Table Styling */
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #f1f5f9;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background-color: #f8fafc;
+    }
+
+    /* Status Radio Segmented Options */
+    .status-group {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .status-group input[type="radio"] {
+      display: none;
+    }
+
+    .status-btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg-main);
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    /* Active Radio Button States */
+    .status-group input[value="H"]:checked + .status-btn { background: var(--hadir); color: white; border-color: var(--hadir); }
+    .status-group input[value="I"]:checked + .status-btn { background: var(--izin); color: white; border-color: var(--izin); }
+    .status-group input[value="S"]:checked + .status-btn { background: var(--sakit); color: white; border-color: var(--sakit); }
+    .status-group input[value="A"]:checked + .status-btn { background: var(--alpa); color: white; border-color: var(--alpa); }
+
+    /* Summary Badges */
+    .badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .badge-hadir { background: #d1fae5; color: #065f46; }
+    .badge-izin { background: #dbeafe; color: #1e40af; }
+    .badge-sakit { background: #fef3c7; color: #92400e; }
+    .badge-alpa { background: #fee2e2; color: #991b1b; }
+
+    /* Progress Bar */
+    .progress-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 4px;
+    }
+
+    /* Action Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      width: 100%;
+      margin-top: 16px;
+    }
+
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-success { background: #10b981; color: white; }
+    .btn-success:hover { background: #059669; }
+
+    .center { text-align: center; }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .card { border: none; box-shadow: none; padding: 0; }
+      .btn, .form-card, .status-group, select { display: none !important; }
+      .app-header { background: none; color: black; padding: 0; margin-bottom: 20px; }
+      .class-badge { border: 1px solid #000; color: black; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header App -->
+    <header class="app-header">
+      <div>
+        <h1>Presensi & Rekapitulasi Digital</h1>
+        <p>Sistem manajemen kehadiran siswa berbasis otomatisasi bulanan</p>
+      </div>
+      <div class="class-badge">Kelas 11 TKJ 2</div>
+    </header>
+
+    <!-- Header Form Informasi -->
+    <div class="card form-card">
+      <div class="info-grid">
+        <div class="form-group">
+          <label for="tanggal">Tanggal Hari Ini</label>
+          <input type="date" id="tanggal">
+        </div>
+        <div class="form-group">
+          <label for="bulanAbsen">Pilih Bulan Input</label>
+          <select id="bulanAbsen">
+            <option value="Januari">Januari</option>
+            <option value="Februari">Februari</option>
+            <option value="Maret">Maret</option>
+            <option value="April">April</option>
+            <option value="Mei">Mei</option>
+            <option value="Juni">Juni</option>
+            <option value="Juli">Juli</option>
+            <option value="Agustus">Agustus</option>
+            <option value="September">September</option>
+            <option value="Oktober">Oktober</option>
+            <option value="November">November</option>
+            <option value="Desember">Desember</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="guru">Guru Pengajar</label>
+          <input type="text" id="guru" placeholder="Nama Guru...">
+        </div>
+        <div class="form-group">
+          <label for="mapel">Mata Pelajaran</label>
+          <input type="text" id="mapel" placeholder="Mata Pelajaran...">
+        </div>
+      </div>
+    </div>
+
+    <!-- TABEL 1: ABSENSI HARIAN -->
+    <div class="card">
+      <div class="section-title">
+        <h2>1. Form Absensi Harian</h2>
+      </div>
+      
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 50px;" class="center">No</th>
+              <th>Nama Siswa</th>
+              <th style="width: 260px;" class="center">Status Kehadiran Hari Ini</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyHarian">
+            <!-- Render JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <button type="button" class="btn btn-primary" onclick="prosesAbsen()">
+        Proses & Simpan Ke Rekap Bulanan
+      </button>
+    </div>
+
+    <!-- TABEL 2: REKAPITULASI BULANAN -->
+    <div class="card">
+      <div class="section-title">
+        <h2>2. Rekapitulasi Kehadiran</h2>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <label for="filterBulan" style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Lihat Rekap:</label>
+          <select id="filterBulan" onchange="renderRekap()">
+            <option value="Januari">Januari</option>
+            <option value="Februari">Februari</option>
+            <option value="Maret">Maret</option>
+            <option value="April">April</option>
+            <option value="Mei">Mei</option>
+            <option value="Juni">Juni</option>
+            <option value="Juli">Juli</option>
+            <option value="Agustus">Agustus</option>
+            <option value="September">September</option>
+            <option value="Oktober">Oktober</option>
+            <option value="November">November</option>
+            <option value="Desember">Desember</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 50px;" class="center">No</th>
+              <th>Nama Siswa</th>
+              <th style="width: 60px;" class="center">H</th>
+              <th style="width: 60px;" class="center">I</th>
+              <th style="width: 60px;" class="center">S</th>
+              <th style="width: 60px;" class="center">A</th>
+              <th style="width: 180px;">Persentase</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyRekap">
+            <!-- Render JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <button type="button" class="btn btn-success" onclick="window.print()">
+        Cetak / Export Laporan
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const daftarSiswa = [
+      "ABDAN KAUTSAR NUGRAHA", "ARSAVA KEYLA CAPRICONITA", "AYATU SIFANA RAMADANI",
+      "BINTANG AFIYA RACHMA", "CHANTIKA PUTRI AULIA LUBIS", "DHEA PUTRI RAMADANI",
+      "DZAKWAN RAMADANI", "EKA SAPUTRA", "FARAS NUGRAHA", "FEBRI RAHMADANI",
+      "LINGGA FAULINA", "M. PUTRA ALIFIAN", "MIFTAKHUL ULUM", "MOCHAMAD ARAMERU QESHA",
+      "MOZHA SEREN ALVIONA", "MUHAMAD ADAM MAULANA", "MUHAMAD IKHSAN HIBATULLOH",
+      "MUHAMAD SURYA ABDULLAH", "MUHAMMAD IHSAN FAWAZ", "MUHAMMAD AZZAMY SYAUQI",
+      "MUHAMMAD DARUL FARH", "MUHAMMAD FAIRUZZ TAMIRULLAH", "MUHAMMAD FATHAN AL'ATQA",
+      "MUHAMMAD RAYSHA RAMADHANI", "NASYA ABIEZA CHOIR", "NAZAR ARDIANSYAH",
+      "PRISCO STEVEN SIBURIAN", "PUTRANTO ADI NUGROHO", "RANGGA HIDAYATULLAH",
+      "RIDHO RACHMAN", "RIFKI AKBAR DARMANTO", "RIZKI FATHAN MAULIDAN", "ROBI SUJANA",
+      "SULTAN", "YUSUF ASTHA FAIRUS", "ZIFARA KAYLA PUTRI"
+    ];
+
+    const daftarBulan = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+
+    let rekapData = {};
+
+    function initData() {
+      daftarBulan.forEach(bulan => {
+        rekapData[bulan] = daftarSiswa.map(nama => ({
+          nama: nama, H: 0, I: 0, S: 0, A: 0
+        }));
+      });
+
+      const today = new Date();
+      document.getElementById('tanggal').value = today.toISOString().substring(0, 10);
+      
+      const bulanSekarang = daftarBulan[today.getMonth()];
+      document.getElementById('bulanAbsen').value = bulanSekarang;
+      document.getElementById('filterBulan').value = bulanSekarang;
+    }
+
+    function renderHarian() {
+      const tbodyHarian = document.getElementById('tbodyHarian');
+      tbodyHarian.innerHTML = '';
+
+      daftarSiswa.forEach((nama, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="center" style="font-weight: 600; color: var(--text-muted);">${index + 1}</td>
+          <td style="font-weight: 500;">${nama}</td>
+          <td>
+            <div class="status-group">
+              <label>
+                <input type="radio" name="status_${index}" value="H" checked>
+                <span class="status-btn">H</span>
+              </label>
+              <label>
+                <input type="radio" name="status_${index}" value="I">
+                <span class="status-btn">I</span>
+              </label>
+              <label>
+                <input type="radio" name="status_${index}" value="S">
+                <span class="status-btn">S</span>
+              </label>
+              <label>
+                <input type="radio" name="status_${index}" value="A">
+                <span class="status-btn">A</span>
+              </label>
+            </div>
+          </td>
+        `;
+        tbodyHarian.appendChild(tr);
+      });
+    }
+
+    function prosesAbsen() {
+      const bulanPilihan = document.getElementById('bulanAbsen').value;
+
+      daftarSiswa.forEach((_, index) => {
+        const status = document.querySelector(`input[name="status_${index}"]:checked`).value;
+        if (status === 'H') rekapData[bulanPilihan][index].H += 1;
+        if (status === 'I') rekapData[bulanPilihan][index].I += 1;
+        if (status === 'S') rekapData[bulanPilihan][index].S += 1;
+        if (status === 'A') rekapData[bulanPilihan][index].A += 1;
+      });
+
+      document.getElementById('filterBulan').value = bulanPilihan;
+      renderRekap();
+
+      alert(`Absensi berhasil diproses untuk bulan ${bulanPilihan}!`);
+    }
+
+    function renderRekap() {
+      const bulanTerpilih = document.getElementById('filterBulan').value;
+      const tbodyRekap = document.getElementById('tbodyRekap');
+      tbodyRekap.innerHTML = '';
+
+      const dataBulanIni = rekapData[bulanTerpilih];
+
+      dataBulanIni.forEach((data, index) => {
+        const totalPertemuan = data.H + data.I + data.S + data.A;
+        const persentaseVal = totalPertemuan > 0 ? Math.round((data.H / totalPertemuan) * 100) : 0;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="center" style="font-weight: 600; color: var(--text-muted);">${index + 1}</td>
+          <td style="font-weight: 500;">${data.nama}</td>
+          <td class="center"><span class="badge badge-hadir">${data.H}</span></td>
+          <td class="center"><span class="badge badge-izin">${data.I}</span></td>
+          <td class="center"><span class="badge badge-sakit">${data.S}</span></td>
+          <td class="center"><span class="badge badge-alpa">${data.A}</span></td>
+          <td>
+            <div class="progress-container">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${persentaseVal}%;"></div>
+              </div>
+              <span style="font-size: 12px; font-weight: 600; width: 35px;">${persentaseVal}%</span>
+            </div>
+          </td>
+        `;
+        tbodyRekap.appendChild(tr);
+      });
+    }
+
+    window.onload = function() {
+      initData();
+      renderHarian();
+      renderRekap();
+    };
+  </script>
+
+</body>
+</html>
